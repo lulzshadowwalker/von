@@ -37,7 +37,7 @@ final class VonTheme {
     backgroundColor: Colors.transparent,
     elevation: 0,
     unselectedIconTheme: IconThemeData(
-      color: VonColors.mutedLight,
+      color: VonColors.muted,
       size: 30,
     ),
     showUnselectedLabels: false,

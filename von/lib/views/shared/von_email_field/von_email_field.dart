@@ -1,6 +1,5 @@
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:validators/validators.dart';
 import 'package:von/views/shared/von_form_field/von_form_field.dart';

@@ -7,6 +7,5 @@ class VonColors {
   static const Color white = Color(0xFFFDFFFC);
   static const Color rose = Color(0xFFE8998D);
   static const Color blue = Color(0xFF0067FF);
-  static final Color mutedLight = Colors.blueGrey.shade200;
-  static const Color muted = Colors.blueGrey;
+  static const Color muted = Color(0xFFC6C9CE);
 }
