@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:von/helpers/von_colors.dart';
-import 'package:von/helpers/von_extensions.dart';
+import 'package:von/models/transaction_type.dart';
+import 'package:von/theme/von_theme.dart';
 
-class ActionTile extends StatelessWidget {
-  const ActionTile({
+class TransactionTile extends StatelessWidget {
+  const TransactionTile({
     Key? key,
     required this.title,
-    required this.description,
+    required this.date,
     required this.color,
     required this.icon,
+    required this.type,
+    required this.amount,
     this.onTap,
-  }) : super(key: key);
+  })  : isPlus = type == TransactionType.plus,
+        super(key: key);
 
   final String title;
-  final String description;
+  final String date;
   final Color color;
   final Widget icon;
   final void Function()? onTap;
+  final double amount;
+  final TransactionType type;
+  final bool isPlus;
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +35,27 @@ class ActionTile extends StatelessWidget {
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(50),
               color: color,
             ),
             child: icon,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  description,
+                  date,
                   style: const TextStyle(
                     fontSize: 12,
                     color: VonColors.muted,
@@ -57,11 +64,14 @@ class ActionTile extends StatelessWidget {
               ],
             ),
           ),
-          Transform.flip(
-            flipX: context.directionality == TextDirection.rtl,
-            child: const Icon(
-              FontAwesomeIcons.angleRight,
+          Text(
+            '${isPlus ? '+' : '-'}$amount',
+            style: TextStyle(
+              color: isPlus ? VonColors.green : VonColors.red,
+              fontSize: 18,
+              fontFamily: VonTheme.secondaryFontFamily,
             ),
+            // ignore: prefer_const_constructors
           ),
         ],
       ),

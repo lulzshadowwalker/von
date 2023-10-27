@@ -12,5 +12,6 @@
   "login": "Login",
   "home": "Home",
   "tripHistory": "Trip History", 
-  "settings": "Settings"
+  "settings": "Settings",
+  "transactionsHistory": "Transactions\nHistory"
 }

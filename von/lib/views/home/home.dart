@@ -8,6 +8,7 @@ import 'package:von/helpers/von_colors.dart';
 import 'package:von/helpers/von_extensions.dart';
 import 'package:von/theme/von_theme.dart';
 import 'package:von/views/home/components/action_tile.dart';
+import 'package:von/views/transactions/transactions.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -68,33 +69,41 @@ class Home extends StatelessWidget {
                 ),
               ),
               const ActionTile(
-                color: Color(0xFFC8B3F3),
+                color: VonColors.lightPurple,
                 title: 'Add Credit',
                 description: 'add credit to your account balance',
                 icon: Icon(FontAwesomeIcons.creditCard),
               ),
               const SizedBox(height: 20),
               const ActionTile(
-                color: Color(0xFFFCD59B),
+                color: VonColors.lightOrange,
                 title: 'Schedule',
                 description: 'today’s bus schedules',
                 icon: Icon(FontAwesomeIcons.calendar),
               ),
               const SizedBox(height: 20),
               const ActionTile(
-                color: Color(0xFFCCFC9B),
+                color: VonColors.lightGreen,
                 title: 'Routes',
                 description: 'Bus Routes and stop points',
                 icon: Icon(FontAwesomeIcons.route),
               ),
               const SizedBox(height: 20),
               ActionTile(
-                color: const Color(0xFF9BD9FC),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Transactions(),
+                    ),
+                  );
+                },
+                color: VonColors.lightBlue,
                 title: 'Transactions',
                 description: 'logs of all of your previous transactions',
                 icon: Transform.rotate(
-                    angle: 3 * pi / 4,
-                    child: const Icon(FontAwesomeIcons.arrowRightArrowLeft)),
+                  angle: 3 * pi / 4,
+                  child: const Icon(FontAwesomeIcons.arrowRightArrowLeft),
+                ),
               ),
             ],
           ),
