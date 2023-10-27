@@ -14,91 +14,89 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 42),
-                const Text(
-                  'Welcome back,',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w200,
-                  ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 42),
+              const Text(
+                'Welcome back,',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w200,
                 ),
-                const Text(
-                  'lulzshadowwalker',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              const Text(
+                'lulzshadowwalker',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
                 ),
-                // TODO, flip counter animation for account balance
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 24),
-                  child: Column(
-                    children: [
-                      Text(
-                        '\$1,200.49',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontFamily: VonTheme.secondaryFontFamily,
-                        ),
+              ),
+              // TODO, flip counter animation for account balance
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 24),
+                child: Column(
+                  children: [
+                    Text(
+                      '\$1,200.49',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontFamily: VonTheme.secondaryFontFamily,
                       ),
-                      const Text(
-                        'Account Balance',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: VonColors.muted,
-                        ),
+                    ),
+                    const Text(
+                      'Account Balance',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: VonColors.muted,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 36),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    FontAwesomeIcons.qrcode,
-                    size: 280,
-                  ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 36),
+                alignment: Alignment.center,
+                child: const Icon(
+                  FontAwesomeIcons.qrcode,
+                  size: 280,
                 ),
-                const ActionTile(
-                  color: Color(0xFFC8B3F3),
-                  title: 'Add Credit',
-                  description: 'add credit to your account balance',
-                  icon: Icon(FontAwesomeIcons.creditCard),
-                ),
-                const SizedBox(height: 20),
-                const ActionTile(
-                  color: Color(0xFFFCD59B),
-                  title: 'Schedule',
-                  description: 'today’s bus schedules',
-                  icon: Icon(FontAwesomeIcons.calendar),
-                ),
-                const SizedBox(height: 20),
-                const ActionTile(
-                  color: Color(0xFFCCFC9B),
-                  title: 'Routes',
-                  description: 'Bus Routes and stop points',
-                  icon: Icon(FontAwesomeIcons.route),
-                ),
-                const SizedBox(height: 20),
-                ActionTile(
-                  color: const Color(0xFF9BD9FC),
-                  title: 'Transactions',
-                  description: 'logs of all of your previous transactions',
-                  icon: Transform.rotate(
-                      angle: 3 * pi / 4,
-                      child: const Icon(FontAwesomeIcons.arrowRightArrowLeft)),
-                ),
-              ],
-            ),
+              ),
+              const ActionTile(
+                color: Color(0xFFC8B3F3),
+                title: 'Add Credit',
+                description: 'add credit to your account balance',
+                icon: Icon(FontAwesomeIcons.creditCard),
+              ),
+              const SizedBox(height: 20),
+              const ActionTile(
+                color: Color(0xFFFCD59B),
+                title: 'Schedule',
+                description: 'today’s bus schedules',
+                icon: Icon(FontAwesomeIcons.calendar),
+              ),
+              const SizedBox(height: 20),
+              const ActionTile(
+                color: Color(0xFFCCFC9B),
+                title: 'Routes',
+                description: 'Bus Routes and stop points',
+                icon: Icon(FontAwesomeIcons.route),
+              ),
+              const SizedBox(height: 20),
+              ActionTile(
+                color: const Color(0xFF9BD9FC),
+                title: 'Transactions',
+                description: 'logs of all of your previous transactions',
+                icon: Transform.rotate(
+                    angle: 3 * pi / 4,
+                    child: const Icon(FontAwesomeIcons.arrowRightArrowLeft)),
+              ),
+            ],
           ),
         ),
       ),

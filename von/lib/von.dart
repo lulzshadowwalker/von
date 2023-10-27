@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:von/helpers/von_const.dart';
 import 'package:von/views/auth/login/login.dart';
 import 'package:von/views/home/home.dart';
+import 'package:von/views/interface/interface.dart';
 
 import 'theme/von_theme.dart';
 
@@ -21,7 +22,7 @@ class Von extends ConsumerWidget {
       supportedLocales: VL.supportedLocales,
       locale: const Locale(VonConst.en),
       theme: theme.light(),
-      home: const Home(),
+      home: const Interface(),
     );
   }
 }

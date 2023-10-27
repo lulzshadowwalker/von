@@ -9,5 +9,8 @@
   "forgotPassword": "Forgot Password",
   "dontHaveAnAccount": "don't have an account?",
   "signUp": "Sign up",
-  "login": "Login"
+  "login": "Login",
+  "home": "Home",
+  "tripHistory": "Trip History", 
+  "settings": "Settings"
 }
