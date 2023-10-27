@@ -1,0 +1,13 @@
+{
+  "dark": "dark",
+  "light": "light",
+  "enterValidEmail": "enter a valid email",
+  "password": "password",
+  "pickStrongPassword": "pick a strong password",
+  "signIn": "Sign in",
+  "enterAValidEmailAndPasswordToContinue": "Enter a valid email and password to continue",
+  "forgotPassword": "Forgot Password",
+  "dontHaveAnAccount": "don't have an account?",
+  "signUp": "Sign up",
+  "login": "Login"
+}

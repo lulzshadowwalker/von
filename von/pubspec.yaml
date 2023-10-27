@@ -43,6 +43,11 @@ dependencies:
   intl: any
   logger: ^1.3.0
   go_router: ^7.0.1
+  google_fonts: ^6.1.0
+  font_awesome_flutter: ^10.6.0
+  validators: ^3.0.0
+  cached_network_image: ^3.3.0
+  enefty_icons: ^1.0.7
 
 dev_dependencies:
   flutter_test:
