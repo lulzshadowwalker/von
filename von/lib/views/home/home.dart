@@ -8,6 +8,7 @@ import 'package:von/helpers/von_colors.dart';
 import 'package:von/helpers/von_extensions.dart';
 import 'package:von/theme/von_theme.dart';
 import 'package:von/views/home/components/action_tile.dart';
+import 'package:von/views/routes/routes.dart';
 import 'package:von/views/transactions/transactions.dart';
 
 class Home extends StatelessWidget {
@@ -82,11 +83,18 @@ class Home extends StatelessWidget {
                 icon: Icon(FontAwesomeIcons.calendar),
               ),
               const SizedBox(height: 20),
-              const ActionTile(
+              ActionTile(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Routes(),
+                    ),
+                  );
+                },
                 color: VonColors.lightGreen,
                 title: 'Routes',
                 description: 'Bus Routes and stop points',
-                icon: Icon(FontAwesomeIcons.route),
+                icon: const Icon(FontAwesomeIcons.route),
               ),
               const SizedBox(height: 20),
               ActionTile(

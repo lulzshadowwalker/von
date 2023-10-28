@@ -11,7 +11,7 @@ final class VonTheme {
   final Ref ref;
 
   // TODO, localized font family
-  static String? get primaryFontFamily => GoogleFonts.aBeeZee().fontFamily;
+  static String? get primaryFontFamily => GoogleFonts.poppins().fontFamily;
   static String? get secondaryFontFamily => GoogleFonts.russoOne().fontFamily;
 
   static const _dividerThemeData = DividerThemeData(
