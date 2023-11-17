@@ -35,7 +35,7 @@ export default function SideMenuItem({ href, icon }: SideMenuItemProps) {
         <FontAwesomeIcon
           icon={icon}
           size={'lg'}
-          className={`m-auto group-hover:text-on-primary transition-all ${
+          className={`mx-auto group-hover:text-on-primary transition-all ${
             isActive ? 'text-on-primary' : 'text-muted-700'
           }`}
         />
