@@ -2,26 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  html {
+    --primary-color: #fff;
+    --on-primary-color: #161616;
+    --secondary-color: #457eff;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+html[data-theme='dark'] {
+  --aboba: aboba;
+  /* TODO, dark theme setup*/
 }
+
+/* START CSS RESET */
+*:where(
+:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)
+) {
+  all: unset;
+  display: revert;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+a,
+button {
+  cursor: revert;
+}
+
+ol,
+ul,
+menu,
+summary {
+  list-style: none;
+}
+
+img {
+  max-inline-size: 100%;
+  max-block-size: 100%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+input,
+textarea {
+  -webkit-user-select: auto;
+}
+
+textarea {
+  white-space: revert;
+}
+
+meter {
+  -webkit-appearance: revert;
+  appearance: revert;
+}
+
+:where(pre) {
+  all: revert;
+  box-sizing: border-box;
+}
+
+::placeholder {
+  color: unset;
+}
+
+:where([hidden]) {
+  display: none;
+}
+
+:where([contenteditable]:not([contenteditable='false'])) {
+  -moz-user-modify: read-write;
+  -webkit-user-modify: read-write;
+  overflow-wrap: break-word;
+  -webkit-line-break: after-white-space;
+  -webkit-user-select: auto;
+}
+
+:where([draggable='true']) {
+  -webkit-user-drag: element;
+}
+
+:where(dialog:modal) {
+  all: revert;
+  box-sizing: border-box;
+}
+
+::-webkit-details-marker {
+  display: none;
+}
+/* END CSS RESET */
