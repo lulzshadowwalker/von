@@ -16,9 +16,10 @@ const config: Config = {
           600: "#898597",
           700: "#C6C9CE", 
         },
-        "primary": "var(--primary-color)",
-        "on-primary": "var(--on-primary-color)",
-        "secondary": "var(--secondary-color)",
+        "primary": "rgb(var(--primary-color) / <alpha-value>)",
+        "on-primary": "rgb(var(--on-primary-color) / <alpha-value>)",
+        "secondary": "rgb(var(--secondary-color) / <alpha-value>)",
+        "secondary-focus": "rgb(var(--secondary-focused-color) / <alpha-value>)",
         "von-red": {
           500: "#EE5353", 
         },

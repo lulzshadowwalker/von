@@ -1,0 +1,29 @@
+import clsx from 'clsx';
+import { ReactNode } from 'react';
+
+type PrimaryButtonProps = {
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;
+};
+
+export default function PrimaryButton({
+  disabled,
+  className,
+  children,
+  ...rest
+}: PrimaryButtonProps) {
+  return (
+    <button
+      className={`bg-secondary text-primary py-[0.8rem] px-[2.4rem] flex items-center justify-center cursor-pointer transition-all hover:bg-secondary-focused ${clsx(
+        {
+          'bg-muted-500 pointer-events-none': disabled,
+        },
+      )} ${className}`}
+      disabled
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}

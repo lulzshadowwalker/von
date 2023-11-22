@@ -4,10 +4,10 @@
 
 @layer base {
   html {
-    --primary-color: #fff;
-    --on-primary-color: #161616;
-    --secondary-color: #457eff;
-  }
+--primary-color: 255 255 255;
+--on-primary-color: 22 22 22;
+--secondary-color: 69 126 255;
+--secondary-focused-color: 31 98 255;  }
 }
 
 html[data-theme='dark'] {
