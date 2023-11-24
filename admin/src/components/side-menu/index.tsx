@@ -3,6 +3,7 @@ import {
   faBus,
   faCog,
   faHome,
+  faIdBadge,
   faRightFromBracket,
   faRoute,
   faTicket,
@@ -14,6 +15,7 @@ export default function Sidemenu() {
     <nav className='fixed top-0 left-0 bottom-0 flex flex-col justify-stretch w-[8rem] border-0 border-r-[0.5px] border-solid border-muted-200'>
       <div className='flex-grow-[8] flex flex-col items-center justify-center gap-[2.8rem]'>
         <SideMenuItem href='/' icon={faHome} />
+        <SideMenuItem href='/drivers' icon={faIdBadge} />
         <SideMenuItem href='/busses' icon={faBus} />
         <SideMenuItem href='/trips' icon={faTicket} />
         <SideMenuItem href='/routes' icon={faRoute} />

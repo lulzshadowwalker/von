@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
+import { ButtonHTMLAttributes } from 'react';
 
 export default function PrimaryButton({
   disabled,
@@ -10,10 +10,10 @@ export default function PrimaryButton({
   return (
     <button
       className={`bg-secondary text-primary py-[0.8rem] px-[2.4rem] flex items-center justify-center cursor-pointer transition-all hover:bg-secondary-focused ${clsx(
-        {
-          'bg-muted-600 pointer-events-none': disabled,
-        },
-      )} ${className}`}
+{
+'bg-muted-600 pointer-events-none': disabled,
+},
+)} ${className}`}
       disabled
       {...rest}
     >

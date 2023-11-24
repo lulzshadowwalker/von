@@ -30,7 +30,7 @@ export default function SideMenuItem({ href, icon }: SideMenuItemProps) {
         )}`}
       >
         {isActive && (
-          <div className='w-2 h-full bg-black rounded-se-md rounded-ee-md' />
+          <div className='w-[4px] h-full bg-black rounded-se-md rounded-ee-md' />
         )}
         <FontAwesomeIcon
           icon={icon}

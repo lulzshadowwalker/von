@@ -4,10 +4,11 @@
 
 @layer base {
   html {
---primary-color: 255 255 255;
---on-primary-color: 22 22 22;
---secondary-color: 69 126 255;
---secondary-focused-color: 31 98 255;  }
+    --primary-color: 255 255 255;
+    --on-primary-color: 22 22 22;
+    --secondary-color: 69 126 255;
+    --secondary-focused-color: 31 98 255;
+  }
 }
 
 html[data-theme='dark'] {
@@ -17,8 +18,8 @@ html[data-theme='dark'] {
 
 /* START CSS RESET */
 *:where(
-:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)
-) {
+    :not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)
+  ) {
   all: unset;
   display: revert;
 }
@@ -40,7 +41,8 @@ body {
   font-size: 1.6rem;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }

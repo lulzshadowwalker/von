@@ -98,58 +98,82 @@ export default function Trip({ params }: TripProps) {
         <div className='w-full rounded-[50px] lg:rounded-[100px]  h-[85vh] bg-muted-500 mt-[1.6rem]' />
       </section>
 
-      <div className='mx-page'>
-        <table className='w-full mt-[6.4rem] table-fixed'>
-          <thead className='border-0 border-b-[0.5px] border-muted border-solid text-muted-700 text-[14pt]'>
-            <tr>
-              <th className='pb-[1.4rem]'>Passenger</th>
-              <th>Check-in</th>
-              <th>Pick up</th>
-              <th className='max-w-[15rem] w-[15rem]'>Review</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {[...Array(5)].map((_, i) => (
-              <tr
-                className='text-on-primary text-[12pt] border-0 border-b-[0.5px] border-muted-700 border-solid'
-                key={i}
-              >
-                <td className='flex gap-[1.6rem] items-center py-[1.2rem]'>
-                  <Image
-                    alt='passenger'
-                    height={36}
-                    width={36}
-                    quality={90}
-                    src='https://images.unsplash.com/photo-1610645011391-d9bfb02ed57a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fG9sZCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D'
-                    className='rounded-full h-[3.6rem] w-[3.6rem] object-cover'
-                  />
-                  <div>
-                    <h2>Alan Humming</h2>
-                    <button className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.4rem] rounded cursor-pointer transition-all hover:bg-muted-700 w-fit'>
-                      Contact Information
-                    </button>
-                  </div>
-                </td>
-                <td className='align-middle'>
-                  <time dateTime='10:10am'>10:10am</time>
-                </td>
-                <td className='align-middle'>
-                  <div className='flex items-center gap-[0.8rem]'>
-                    <div
-                      className={`rounded-full h-[1.8rem] w-[1.8rem] bg-von-blue-700`}
-                    />
-                    <h6 className='align-middle'>North Amman Bus Station</h6>
-                  </div>
-                </td>
-                <td className='align-middle'>
-                  <RatingStars rating={4} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <section className='flex flex-col overflow-x-auto my-[6.4rem]'>
+        <div className='mx-page'>
+          <div className='inline-block min-w-full'>
+            <div className='overflow-x-auto'>
+              <table className='min-w-full'>
+                <thead className='border-0 border-solid border-b mb-[2.6rem]'>
+                  <tr>
+                    <th
+                      scope='col'
+                      className='pb-[1.4rem] text-[20pt] text-muted-600 px-5'
+                    >
+                      Passenger
+                    </th>
+                    <th
+                      scope='col'
+                      className='pb-[1.4rem] text-[20pt] text-muted-600 px-5'
+                    >
+                      Check-in
+                    </th>
+                    <th
+                      scope='col'
+                      className='pb-[1.4rem] text-[20pt] text-muted-600 px-5'
+                    >
+                      Pick up
+                    </th>
+                    <th
+                      scope='col'
+                      className='pb-[1.4rem] text-[20pt] text-muted-600 px-5'
+                    >
+                      Review
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(5)].map((_, i) => (
+                    <tr className="border-0 border-b-[0.5px] border-solid border-on-primary" key={i}>
+                      <td className='flex gap-[1.6rem] items-center py-[1.2rem] px-5 whitespace-nowrap'>
+                        <Image
+                          alt='passenger Alan Hummmmmming'
+                          height={36}
+                          width={36}
+                          quality={90}
+                          src='https://images.unsplash.com/photo-1610645011391-d9bfb02ed57a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fG9sZCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D'
+                          className='rounded-full h-[3.6rem] w-[3.6rem] object-cover'
+                        />
+                        <div>
+                          <h2>Alan Humming</h2>
+                          <button className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.4rem] rounded cursor-pointer transition-all hover:bg-muted-700 w-fit'>
+                            Contact Information
+                          </button>
+                        </div>
+                      </td>
+                      <td className='align-middle py-[1.2rem] px-5 whitespace-nowrap'>
+                        <time dateTime='10:10am'>10:10am</time>
+                      </td>
+                      <td className='align-middle py-[1.2rem] px-5 whitespace-nowrap'>
+                        <div className='flex items-center gap-[0.8rem]'>
+                          <div
+                            className={`rounded-full h-[1.8rem] w-[1.8rem] bg-von-blue-700`}
+                          />
+                          <h6 className='align-middle'>
+                            North Amman Bus Station
+                          </h6>
+                        </div>
+                      </td>
+                      <td className='align-middle py-[1.2rem] px-5 whitespace-nowrap'>
+                        <RatingStars rating={4} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
