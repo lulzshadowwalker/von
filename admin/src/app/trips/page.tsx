@@ -54,7 +54,7 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...Array(5)].map((_, i) => {
+                  {[...Array(10)].map((_, i) => {
                     return (
                       <tr
                         className='hover:bg-muted-400 transition-all cursor-pointer border-0 border-b-[0.5px] border-solid border-on-primary'
