@@ -8,7 +8,7 @@ import TabBar from '@/components/tab-bar';
 import TabBarItem from '@/components/tab-bar/components/tab-bar-item';
 
 export default function Trips() {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <>
