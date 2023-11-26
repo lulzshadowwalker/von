@@ -18,6 +18,7 @@ export default function Home() {
             Welcome Back, Valeria!
           </h1>
         </section>
+
         <div className='rounded-full h-[3.2rem] w-[3.2rem] bg-muted-700/50 flex items-center justify-center cursor-pointer'>
           <FontAwesomeIcon icon={faBell} size={'sm'} />
         </div>

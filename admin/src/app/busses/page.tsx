@@ -1,18 +1,21 @@
-import Image from 'next/image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SecondaryButton from '@/components/secondary-button';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Drivers() {
+export default function Busses() {
   return (
     <>
-      <header className='w-full px-page h-[8.5rem] bg-muted-400 flex justify-between items-center'>
+      <header className='w-full ps-page h-[8.5rem] bg-muted-400 flex justify-between items-center'>
         <section className='flex gap-[1.2rem] items-center'>
-          <h1 className='text-[22pt] text-muted-700'>Drivers</h1>
+          <h1 className='text-[22pt] text-muted-700 w-max me-4'>
+            Busses
+          </h1>
         </section>
-        <div className='rounded-full h-[3.2rem] w-[3.2rem] bg-muted-700/50 flex items-center justify-center cursor-pointer'>
-          <FontAwesomeIcon icon={faBell} size={'sm'} />
-        </div>
+        <Link href='notifications/create' className='h-full'>
+          <SecondaryButton className='h-full w-[25rem]'>New</SecondaryButton>
+        </Link>
       </header>
 
       <main>
@@ -24,19 +27,16 @@ export default function Drivers() {
                   <thead className='border-0 border-solid border-b mb-[2.6rem]'>
                     <tr className=' text-[16pt] text-muted-600 px-5'>
                       <th scope='col' className='pb-[1.4rem] px-5'>
-                        Name
+                        Driver
                       </th>
                       <th scope='col' className='pb-[1.4rem] px-5'>
-                        Mobile
+                        Plate Number
                       </th>
                       <th scope='col' className='pb-[1.4rem] px-5'>
-                        Bus
+                        Model
                       </th>
                       <th scope='col' className='pb-[1.4rem] px-5'>
-                        License Number
-                      </th>
-                      <th scope='col' className='pb-[1.4rem] px-5'>
-                        Trips
+                        Capacity
                       </th>
                     </tr>
                   </thead>
@@ -49,28 +49,29 @@ export default function Drivers() {
                         >
                           <td className='flex gap-[1.6rem] items-center py-[1.2rem] px-5 whitespace-nowrap'>
                             <Image
-                              alt='driver John Johnson'
+                              alt='passenger Alan Hummmmmming'
                               height={36}
                               width={36}
                               quality={90}
                               src='https://images.unsplash.com/photo-1610645011391-d9bfb02ed57a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fG9sZCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D'
                               className='rounded-full h-[3.6rem] w-[3.6rem] object-cover'
                             />
-                            <h2>Alan Humming</h2>
+                            <div>
+                              <h2>Alan Humming</h2>
+                              <Link href="/drivers" className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.4rem] rounded cursor-pointer transition-all hover:bg-muted-700 w-fit'>
+                                Driver Information
+                              </Link>
+                            </div>
+                          </td>
+
+                          <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle'>
+                            XYZ8-R804
                           </td>
                           <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle'>
-                            <a href='tel:1234567890'>123 456 7890</a>
+                            The Routemaster
                           </td>
                           <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle'>
-                            <Link href="/busses" className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.25rem] rounded cursor-pointer transition-all hover:bg-muted-700'>
-                              XYZ8-R804
-                            </Link>
-                          </td>
-                          <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle'>
-                            15-2345678
-                          </td>
-                          <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle italic transition-all hover:font-medium underline underline-offset-2'>
-                            <Link href='trips?driver=47'>67</Link>
+                            48
                           </td>
                         </tr>
                       );
