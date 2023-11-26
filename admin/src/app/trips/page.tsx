@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -78,7 +78,7 @@ export default function Trips() {
                           <div>
                             <h2>Alan Humming</h2>
                             <button className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.4rem] rounded cursor-pointer transition-all hover:bg-muted-700 w-fit'>
-                              Contact Information
+                              Driver Information
                             </button>
                           </div>
                         </td>

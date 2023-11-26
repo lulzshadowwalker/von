@@ -18,12 +18,12 @@ export default function Sidemenu() {
         <SideMenuItem href='/drivers' icon={faIdBadge} />
         <SideMenuItem href='/busses' icon={faBus} />
         <SideMenuItem href='/trips' icon={faTicket} />
-        <SideMenuItem href='/routes' icon={faRoute} />
+        <SideMenuItem href={null} icon={faRoute} />
         <SideMenuItem href='/notifications' icon={faBell} />
       </div>
 
       <div className='flex-grow-[2] flex flex-col items-center justify-center gap-[2.8rem] border-0 border-t-[0.5px] border-solid border-muted-200'>
-        <SideMenuItem href='/settings' icon={faCog} />
+        <SideMenuItem href={null} icon={faCog} />
         <SideMenuItem href={null} icon={faRightFromBracket} />
       </div>
     </nav>

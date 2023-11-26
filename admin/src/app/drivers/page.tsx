@@ -2,6 +2,12 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { Metadata } from 'next/types';
+
+export const metadata: Metadata = {
+  title: 'Von | Drivers',
+  description: 'all drivers',
+};
 
 export default function Drivers() {
   return (

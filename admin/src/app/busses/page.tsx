@@ -1,8 +1,12 @@
 import SecondaryButton from '@/components/secondary-button';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Metadata } from 'next/types';
+
+export const metadata: Metadata = {
+  title: 'Von | Busses',
+  description: 'all busses',
+};
 
 export default function Busses() {
   return (
@@ -13,7 +17,7 @@ export default function Busses() {
             Busses
           </h1>
         </section>
-        <Link href='notifications/create' className='h-full'>
+        <Link href='busses/create' className='h-full'>
           <SecondaryButton className='h-full w-[25rem]'>New</SecondaryButton>
         </Link>
       </header>

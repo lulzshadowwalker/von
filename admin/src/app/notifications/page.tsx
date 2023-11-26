@@ -1,5 +1,11 @@
 import SecondaryButton from '@/components/secondary-button';
 import Link from 'next/link';
+import { Metadata } from 'next/types';
+
+export const metadata: Metadata = {
+  title: 'Von | Notifications',
+  description: 'previously sent notificaitons',
+};
 
 export default function Notifications() {
   return (
