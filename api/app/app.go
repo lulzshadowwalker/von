@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lulzshadowwalker/von/controllers"
+	"github.com/lulzshadowwalker/von/handlers"
 )
 
 type App struct {
@@ -14,7 +14,7 @@ type App struct {
 
 func NewApp(port int) *App {
 	return &App{
-		router:     controllers.NewRouter(),
+		router:     handlers.NewRouter(),
 		listenAddr: fmt.Sprintf(":%d", port),
 	}
 }

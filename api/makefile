@@ -1,15 +1,15 @@
 PROJECT_NAME = api
-OUTPUT_DIR = ./bin
+REST_OUT_DIR = ./bin
 
-.PHONY = dev deploy clean
+.PHONY = rest_dev rest_deploy clean
 
-dev: 
+rest_dev: 
 	go run main.go
 
-deploy:
-	mkdir -p ${OUTPUT_DIR}
-	go build main.go -o ${OUTPUT_DIR}/${PROJECT_NAME}
-	nohup ${OUTPUT_DIR}/${PROJECT_NAME}&
+rest_deploy:
+	mkdir -p ${REST_OUT_DIR}
+	go build main.go -o ${REST_OUT_DIR}/${PROJECT_NAME}
+	nohup ${REST_OUT_DIR}/${PROJECT_NAME}&
 
 clean:
-	rm -rf ${OUTPUT_DIR}
+	rm -rf ${REST_OUT_DIR}
