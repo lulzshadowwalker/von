@@ -9,8 +9,6 @@ import (
 	"fmt"
 
 	"github.com/lulzshadowwalker/von/graph/model"
-	"github.com/lulzshadowwalker/von/infrastructure"
-	"github.com/lulzshadowwalker/von/repos"
 )
 
 // SendNotification is the resolver for the sendNotification field.
@@ -20,14 +18,6 @@ func (r *mutationResolver) SendNotification(ctx context.Context, input *model.Se
 
 // Notifications is the resolver for the notifications field.
 func (r *queryResolver) Notifications(ctx context.Context) ([]*model.Notification, error) {
-	ripo := repos.NewNotificationsRepo(infrastructure.Database)
-	res, err := ripo.Index()
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-	return []*model.Notification{}, nil
 	panic(fmt.Errorf("not implemented: Notifications - notifications"))
 }
 
