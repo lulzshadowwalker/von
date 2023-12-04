@@ -1,0 +1,43 @@
+type Query {
+  notifications: [Notification]!
+}
+
+type Mutation {
+  sendNotification(input: SendNotificationInput): Notification
+}
+
+  """
+  TODO: localizization
+        fuck localization 
+  """
+
+type Notification {
+  id: ID!
+  title: String!
+  body: String!
+  sent_by: User!
+  sent_at: String! 
+  target_audience: [NotificationTargetAudience!]!
+  delivery_method: [NotificationDeliveryMethod!]!
+}
+
+enum NotificationDeliveryMethod {
+  EMAIL
+  MOBILE_PUSH
+}
+
+enum NotificationTargetAudience {
+  PASSENGERS 
+  DRIVERS
+}
+
+input SendNotificationInput {
+  title: String!
+  body: String!
+  target_audience: [NotificationTargetAudience!]!
+  delivery_method: [NotificationDeliveryMethod!]!
+}
+
+type User {
+  id: ID!
+}

@@ -3,11 +3,11 @@ package repos
 import "database/sql"
 
 type repo struct {
-	db *sql.DB;
-};
+	db *sql.DB
+}
 
 func newRepo(db *sql.DB) repo {
-  return repo{
-    db: db,
-  }
+	return repo{
+		db: db,
+	}
 }

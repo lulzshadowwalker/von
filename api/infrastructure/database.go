@@ -3,11 +3,12 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 )
 
-var Database *sql.DB;
+var Database *sql.DB
 
 func initDatabase() {
 	uname := os.Getenv("DB_USERNAME")
@@ -27,6 +28,5 @@ func initDatabase() {
 		log.Fatalf("ERROR: cannot connect to database %q\n", err)
 	}
 
-  Database = db;
+	Database = db
 }
-

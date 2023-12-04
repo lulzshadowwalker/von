@@ -1,5 +1,5 @@
 package infrastructure
 
 func init() {
-  // initDatabase()
+	initDatabase()
 }
