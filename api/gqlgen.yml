@@ -85,3 +85,22 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Notification:
+    extraFields:
+      SentBy: 
+        type: "string"
+        overrideTags: 'json:"sent_by"'
+  Bus:
+    extraFields:
+      DriverId: 
+        type: "string"
+        overrideTags: 'json:"driver"'
+  Driver:
+    extraFields:
+      UserId: 
+        type: "string"
+        overrideTags: 'json:"user"'
+      BusId: 
+        type: "string"
+        overrideTags: 'json:"bus"'
+

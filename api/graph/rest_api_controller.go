@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -20,6 +19,7 @@ func NewRestApiController(baseurl string) RestApiController {
 	}
 }
 
+// FIXME : handle unaccepted response codes
 func get[T any](c RestApiController, endpoint string) (t T, err error) {
 	path, err := url.JoinPath(c.Baseurl, endpoint)
 	if err != nil {

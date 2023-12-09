@@ -8,6 +8,24 @@ import (
 	"strconv"
 )
 
+type Bus struct {
+	ID          string  `json:"id"`
+	Driver      *Driver `json:"-"`
+	PlateNumber string  `json:"plate_number"`
+	Model       string  `json:"model"`
+	DriverId    string  `json:"driver"`
+}
+
+type Driver struct {
+	ID string `json:"id"`
+	// TODO: extend driver from user
+	User          *User  `json:"-"`
+	Bus           *Bus   `json:"-"`
+	LicenseNumber string `json:"license_number"`
+	BusId         string `json:"bus"`
+	UserId        string `json:"user"`
+}
+
 // TODO: localizization
 //
 //	fuck localization
@@ -16,9 +34,11 @@ type Notification struct {
 	Title          string                       `json:"title"`
 	Body           string                       `json:"body"`
 	SentAt         string                       `json:"sent_at"`
-  SenderId       string                       `json:"sent_by"`
+	Sender         *User                        `json:"-"`
+	SenderID       string                       `json:"sender_id"`
 	TargetAudience []NotificationTargetAudience `json:"target_audience"`
 	DeliveryMethod []NotificationDeliveryMethod `json:"delivery_method"`
+	SentBy         string                       `json:"sent_by"`
 }
 
 type SendNotificationInput struct {
@@ -29,7 +49,10 @@ type SendNotificationInput struct {
 }
 
 type User struct {
-	ID string `json:"id"`
+	ID     string  `json:"id"`
+	Name   string  `json:"name"`
+	Email  string  `json:"email"`
+	Avatar *string `json:"avatar,omitempty"`
 }
 
 type NotificationDeliveryMethod string

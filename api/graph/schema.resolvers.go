@@ -10,24 +10,42 @@ import (
 	"github.com/lulzshadowwalker/von/graph/model"
 )
 
-// SendNotification is the resolver for the sendNotification field.
-func (r *mutationResolver) SendNotification(ctx context.Context, input *model.SendNotificationInput) (*model.Notification, error) {
-  payload := map[string]any {
-    "title": input.Title,
-    "body": input.Body,
-    "delivery_method": input.DeliveryMethod,
-    "target_audience": input.TargetAudience,
-    // TODO: obtain sender id via auth token
-    "sent_by": "h8r94dl9huaxs18",
-  }
-
-  return post[*model.Notification](r.PocketbaseApiController, "api/collections/notifications/records", payload)
+// Driver is the resolver for the driver field.
+func (r *busResolver) Driver(ctx context.Context, obj *model.Bus) (*model.Driver, error) {
+	a, err := get[*model.Driver](r.PocketbaseApiController, "api/collections/drivers/records/"+obj.DriverId)
+	return a, err
 }
 
-// SentBy is the resolver for the sent_by field.
-func (r *notificationResolver) SentBy(ctx context.Context, obj *model.Notification) (*model.User, error) {
-  a, err := get[*model.User](r.PocketbaseApiController, "api/collections/users/records/" + obj.SenderId)
+// User is the resolver for the user field.
+func (r *driverResolver) User(ctx context.Context, obj *model.Driver) (*model.User, error) {
+  a, err := get[*model.User](r.PocketbaseApiController, "api/collections/users/records/"+obj.UserId)
   return a, err
+}
+
+// Bus is the resolver for the bus field.
+func (r *driverResolver) Bus(ctx context.Context, obj *model.Driver) (*model.Bus, error) {
+  a, err := get[*model.Bus](r.PocketbaseApiController, "api/collections/busses/records/"+obj.BusId)
+  return a, err
+}
+
+// SendNotification is the resolver for the sendNotification field.
+func (r *mutationResolver) SendNotification(ctx context.Context, input *model.SendNotificationInput) (*model.Notification, error) {
+	payload := map[string]any{
+		"title":           input.Title,
+		"body":            input.Body,
+		"delivery_method": input.DeliveryMethod,
+		"target_audience": input.TargetAudience,
+		// TODO: obtain sender id via auth token
+		"sent_by": "h8r94dl9huaxs18",
+	}
+
+	return post[*model.Notification](r.PocketbaseApiController, "api/collections/notifications/records", payload)
+}
+
+// Sender is the resolver for the sender field.
+func (r *notificationResolver) Sender(ctx context.Context, obj *model.Notification) (*model.User, error) {
+	a, err := get[*model.User](r.PocketbaseApiController, "api/collections/users/records/"+obj.SentBy)
+	return a, err
 }
 
 // Notifications is the resolver for the notifications field.
@@ -40,6 +58,32 @@ func (r *queryResolver) Notifications(ctx context.Context) ([]*model.Notificatio
 	return a.Notifs, err
 }
 
+// Drivers is the resolver for the drivers field.
+func (r *queryResolver) Drivers(ctx context.Context) ([]*model.Driver, error) {
+	type res struct {
+		Drivers []*model.Driver `json:"items"`
+	}
+
+	a, err := get[res](r.PocketbaseApiController, "api/collections/drivers/records")
+	return a.Drivers, err
+}
+
+// Busses is the resolver for the busses field.
+func (r *queryResolver) Busses(ctx context.Context) ([]*model.Bus, error) {
+	type res struct {
+		Busses []*model.Bus `json:"items"`
+	}
+
+	aboba, err := get[res](r.PocketbaseApiController, "api/collections/busses/records")
+	return aboba.Busses, err
+}
+
+// Bus returns BusResolver implementation.
+func (r *Resolver) Bus() BusResolver { return &busResolver{r} }
+
+// Driver returns DriverResolver implementation.
+func (r *Resolver) Driver() DriverResolver { return &driverResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
@@ -49,6 +93,20 @@ func (r *Resolver) Notification() NotificationResolver { return &notificationRes
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type busResolver struct{ *Resolver }
+type driverResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type notificationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *notificationResolver) SentBy(ctx context.Context, obj *model.Notification) (*model.User, error) {
+	// 	a, err := get[*model.User](r.PocketbaseApiController, "api/collections/users/records/"+obj.SenderId)
+	// 	return a, err
+	return nil, nil
+}

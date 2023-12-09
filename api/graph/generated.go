@@ -39,15 +39,32 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Bus() BusResolver
+	Driver() DriverResolver
 	Mutation() MutationResolver
 	Notification() NotificationResolver
 	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
+	Internal func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
+	Bus struct {
+		Driver      func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Model       func(childComplexity int) int
+		PlateNumber func(childComplexity int) int
+	}
+
+	Driver struct {
+		Bus           func(childComplexity int) int
+		ID            func(childComplexity int) int
+		LicenseNumber func(childComplexity int) int
+		User          func(childComplexity int) int
+	}
+
 	Mutation struct {
 		SendNotification func(childComplexity int, input *model.SendNotificationInput) int
 	}
@@ -56,29 +73,44 @@ type ComplexityRoot struct {
 		Body           func(childComplexity int) int
 		DeliveryMethod func(childComplexity int) int
 		ID             func(childComplexity int) int
+		Sender         func(childComplexity int) int
+		SenderID       func(childComplexity int) int
 		SentAt         func(childComplexity int) int
-		SentBy         func(childComplexity int) int
 		TargetAudience func(childComplexity int) int
 		Title          func(childComplexity int) int
 	}
 
 	Query struct {
+		Busses        func(childComplexity int) int
+		Drivers       func(childComplexity int) int
 		Notifications func(childComplexity int) int
 	}
 
 	User struct {
-		ID func(childComplexity int) int
+		Avatar func(childComplexity int) int
+		Email  func(childComplexity int) int
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
 	}
 }
 
+type BusResolver interface {
+	Driver(ctx context.Context, obj *model.Bus) (*model.Driver, error)
+}
+type DriverResolver interface {
+	User(ctx context.Context, obj *model.Driver) (*model.User, error)
+	Bus(ctx context.Context, obj *model.Driver) (*model.Bus, error)
+}
 type MutationResolver interface {
 	SendNotification(ctx context.Context, input *model.SendNotificationInput) (*model.Notification, error)
 }
 type NotificationResolver interface {
-	SentBy(ctx context.Context, obj *model.Notification) (*model.User, error)
+	Sender(ctx context.Context, obj *model.Notification) (*model.User, error)
 }
 type QueryResolver interface {
 	Notifications(ctx context.Context) ([]*model.Notification, error)
+	Drivers(ctx context.Context) ([]*model.Driver, error)
+	Busses(ctx context.Context) ([]*model.Bus, error)
 }
 
 type executableSchema struct {
@@ -99,6 +131,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Bus.driver":
+		if e.complexity.Bus.Driver == nil {
+			break
+		}
+
+		return e.complexity.Bus.Driver(childComplexity), true
+
+	case "Bus.id":
+		if e.complexity.Bus.ID == nil {
+			break
+		}
+
+		return e.complexity.Bus.ID(childComplexity), true
+
+	case "Bus.model":
+		if e.complexity.Bus.Model == nil {
+			break
+		}
+
+		return e.complexity.Bus.Model(childComplexity), true
+
+	case "Bus.plate_number":
+		if e.complexity.Bus.PlateNumber == nil {
+			break
+		}
+
+		return e.complexity.Bus.PlateNumber(childComplexity), true
+
+	case "Driver.bus":
+		if e.complexity.Driver.Bus == nil {
+			break
+		}
+
+		return e.complexity.Driver.Bus(childComplexity), true
+
+	case "Driver.id":
+		if e.complexity.Driver.ID == nil {
+			break
+		}
+
+		return e.complexity.Driver.ID(childComplexity), true
+
+	case "Driver.license_number":
+		if e.complexity.Driver.LicenseNumber == nil {
+			break
+		}
+
+		return e.complexity.Driver.LicenseNumber(childComplexity), true
+
+	case "Driver.user":
+		if e.complexity.Driver.User == nil {
+			break
+		}
+
+		return e.complexity.Driver.User(childComplexity), true
 
 	case "Mutation.sendNotification":
 		if e.complexity.Mutation.SendNotification == nil {
@@ -133,19 +221,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.ID(childComplexity), true
 
+	case "Notification.sender":
+		if e.complexity.Notification.Sender == nil {
+			break
+		}
+
+		return e.complexity.Notification.Sender(childComplexity), true
+
+	case "Notification.sender_id":
+		if e.complexity.Notification.SenderID == nil {
+			break
+		}
+
+		return e.complexity.Notification.SenderID(childComplexity), true
+
 	case "Notification.sent_at":
 		if e.complexity.Notification.SentAt == nil {
 			break
 		}
 
 		return e.complexity.Notification.SentAt(childComplexity), true
-
-	case "Notification.sent_by":
-		if e.complexity.Notification.SentBy == nil {
-			break
-		}
-
-		return e.complexity.Notification.SentBy(childComplexity), true
 
 	case "Notification.target_audience":
 		if e.complexity.Notification.TargetAudience == nil {
@@ -161,6 +256,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.Title(childComplexity), true
 
+	case "Query.busses":
+		if e.complexity.Query.Busses == nil {
+			break
+		}
+
+		return e.complexity.Query.Busses(childComplexity), true
+
+	case "Query.drivers":
+		if e.complexity.Query.Drivers == nil {
+			break
+		}
+
+		return e.complexity.Query.Drivers(childComplexity), true
+
 	case "Query.notifications":
 		if e.complexity.Query.Notifications == nil {
 			break
@@ -168,12 +277,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Notifications(childComplexity), true
 
+	case "User.avatar":
+		if e.complexity.User.Avatar == nil {
+			break
+		}
+
+		return e.complexity.User.Avatar(childComplexity), true
+
+	case "User.email":
+		if e.complexity.User.Email == nil {
+			break
+		}
+
+		return e.complexity.User.Email(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
 		}
 
 		return e.complexity.User.ID(childComplexity), true
+
+	case "User.name":
+		if e.complexity.User.Name == nil {
+			break
+		}
+
+		return e.complexity.User.Name(childComplexity), true
 
 	}
 	return 0, false
@@ -368,6 +498,382 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Bus_id(ctx context.Context, field graphql.CollectedField, obj *model.Bus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bus_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bus_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bus_driver(ctx context.Context, field graphql.CollectedField, obj *model.Bus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bus_driver(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Bus().Driver(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Driver)
+	fc.Result = res
+	return ec.marshalODriver2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐDriver(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bus_driver(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bus",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Driver_id(ctx, field)
+			case "user":
+				return ec.fieldContext_Driver_user(ctx, field)
+			case "bus":
+				return ec.fieldContext_Driver_bus(ctx, field)
+			case "license_number":
+				return ec.fieldContext_Driver_license_number(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Driver", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bus_plate_number(ctx context.Context, field graphql.CollectedField, obj *model.Bus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bus_plate_number(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PlateNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bus_plate_number(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bus_model(ctx context.Context, field graphql.CollectedField, obj *model.Bus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bus_model(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Model, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bus_model(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Driver_id(ctx context.Context, field graphql.CollectedField, obj *model.Driver) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Driver_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Driver_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Driver",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Driver_user(ctx context.Context, field graphql.CollectedField, obj *model.Driver) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Driver_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Driver().User(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Driver_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Driver",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "avatar":
+				return ec.fieldContext_User_avatar(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Driver_bus(ctx context.Context, field graphql.CollectedField, obj *model.Driver) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Driver_bus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Driver().Bus(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Bus)
+	fc.Result = res
+	return ec.marshalOBus2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐBus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Driver_bus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Driver",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Bus_id(ctx, field)
+			case "driver":
+				return ec.fieldContext_Bus_driver(ctx, field)
+			case "plate_number":
+				return ec.fieldContext_Bus_plate_number(ctx, field)
+			case "model":
+				return ec.fieldContext_Bus_model(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Bus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Driver_license_number(ctx context.Context, field graphql.CollectedField, obj *model.Driver) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Driver_license_number(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LicenseNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Driver_license_number(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Driver",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_sendNotification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_sendNotification(ctx, field)
 	if err != nil {
@@ -412,8 +918,10 @@ func (ec *executionContext) fieldContext_Mutation_sendNotification(ctx context.C
 				return ec.fieldContext_Notification_body(ctx, field)
 			case "sent_at":
 				return ec.fieldContext_Notification_sent_at(ctx, field)
-			case "sent_by":
-				return ec.fieldContext_Notification_sent_by(ctx, field)
+			case "sender":
+				return ec.fieldContext_Notification_sender(ctx, field)
+			case "sender_id":
+				return ec.fieldContext_Notification_sender_id(ctx, field)
 			case "target_audience":
 				return ec.fieldContext_Notification_target_audience(ctx, field)
 			case "delivery_method":
@@ -612,8 +1120,8 @@ func (ec *executionContext) fieldContext_Notification_sent_at(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Notification_sent_by(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_sent_by(ctx, field)
+func (ec *executionContext) _Notification_sender(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_sender(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -626,7 +1134,7 @@ func (ec *executionContext) _Notification_sent_by(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Notification().SentBy(rctx, obj)
+		return ec.resolvers.Notification().Sender(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -643,7 +1151,7 @@ func (ec *executionContext) _Notification_sent_by(ctx context.Context, field gra
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Notification_sent_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Notification_sender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
@@ -653,8 +1161,58 @@ func (ec *executionContext) fieldContext_Notification_sent_by(ctx context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "avatar":
+				return ec.fieldContext_User_avatar(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_sender_id(ctx context.Context, field graphql.CollectedField, obj *model.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_sender_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SenderID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_sender_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -776,7 +1334,7 @@ func (ec *executionContext) _Query_notifications(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.Notification)
 	fc.Result = res
-	return ec.marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotificationᚄ(ctx, field.Selections, res)
+	return ec.marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_notifications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -795,14 +1353,124 @@ func (ec *executionContext) fieldContext_Query_notifications(ctx context.Context
 				return ec.fieldContext_Notification_body(ctx, field)
 			case "sent_at":
 				return ec.fieldContext_Notification_sent_at(ctx, field)
-			case "sent_by":
-				return ec.fieldContext_Notification_sent_by(ctx, field)
+			case "sender":
+				return ec.fieldContext_Notification_sender(ctx, field)
+			case "sender_id":
+				return ec.fieldContext_Notification_sender_id(ctx, field)
 			case "target_audience":
 				return ec.fieldContext_Notification_target_audience(ctx, field)
 			case "delivery_method":
 				return ec.fieldContext_Notification_delivery_method(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_drivers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_drivers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Drivers(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Driver)
+	fc.Result = res
+	return ec.marshalNDriver2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐDriver(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_drivers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Driver_id(ctx, field)
+			case "user":
+				return ec.fieldContext_Driver_user(ctx, field)
+			case "bus":
+				return ec.fieldContext_Driver_bus(ctx, field)
+			case "license_number":
+				return ec.fieldContext_Driver_license_number(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Driver", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_busses(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_busses(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Busses(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Bus)
+	fc.Result = res
+	return ec.marshalNBus2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐBus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_busses(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Bus_id(ctx, field)
+			case "driver":
+				return ec.fieldContext_Bus_driver(ctx, field)
+			case "plate_number":
+				return ec.fieldContext_Bus_plate_number(ctx, field)
+			case "model":
+				return ec.fieldContext_Bus_model(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Bus", field.Name)
 		},
 	}
 	return fc, nil
@@ -976,6 +1644,135 @@ func (ec *executionContext) fieldContext_User_id(ctx context.Context, field grap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_avatar(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_avatar(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Avatar, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_avatar(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2818,6 +3615,201 @@ func (ec *executionContext) unmarshalInputSendNotificationInput(ctx context.Cont
 
 // region    **************************** object.gotpl ****************************
 
+var busImplementors = []string{"Bus"}
+
+func (ec *executionContext) _Bus(ctx context.Context, sel ast.SelectionSet, obj *model.Bus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, busImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Bus")
+		case "id":
+			out.Values[i] = ec._Bus_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "driver":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Bus_driver(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "plate_number":
+			out.Values[i] = ec._Bus_plate_number(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "model":
+			out.Values[i] = ec._Bus_model(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var driverImplementors = []string{"Driver"}
+
+func (ec *executionContext) _Driver(ctx context.Context, sel ast.SelectionSet, obj *model.Driver) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, driverImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Driver")
+		case "id":
+			out.Values[i] = ec._Driver_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "user":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Driver_user(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "bus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Driver_bus(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "license_number":
+			out.Values[i] = ec._Driver_license_number(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -2895,7 +3887,7 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "sent_by":
+		case "sender":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -2904,7 +3896,7 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Notification_sent_by(ctx, field, obj)
+				res = ec._Notification_sender(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -2931,6 +3923,11 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "sender_id":
+			out.Values[i] = ec._Notification_sender_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "target_audience":
 			out.Values[i] = ec._Notification_target_audience(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3005,6 +4002,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "drivers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_drivers(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "busses":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_busses(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -3052,6 +4093,18 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "name":
+			out.Values[i] = ec._User_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._User_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "avatar":
+			out.Values[i] = ec._User_avatar(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3416,22 +4469,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotificationᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Notification) graphql.Marshaler {
+func (ec *executionContext) marshalNBus2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐBus(ctx context.Context, sel ast.SelectionSet, v []*model.Bus) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3455,7 +4493,7 @@ func (ec *executionContext) marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadow
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNNotification2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx, sel, v[i])
+			ret[i] = ec.marshalOBus2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐBus(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3466,23 +4504,98 @@ func (ec *executionContext) marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadow
 	}
 	wg.Wait()
 
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
+	return ret
+}
+
+func (ec *executionContext) marshalNDriver2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐDriver(ctx context.Context, sel ast.SelectionSet, v []*model.Driver) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
 	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalODriver2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐDriver(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
 
 	return ret
 }
 
-func (ec *executionContext) marshalNNotification2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx context.Context, sel ast.SelectionSet, v *model.Notification) graphql.Marshaler {
-	if v == nil {
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
-		return graphql.Null
 	}
-	return ec._Notification(ctx, sel, v)
+	return res
+}
+
+func (ec *executionContext) marshalNNotification2ᚕᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx context.Context, sel ast.SelectionSet, v []*model.Notification) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalONotification2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNNotificationDeliveryMethod2githubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotificationDeliveryMethod(ctx context.Context, v interface{}) (model.NotificationDeliveryMethod, error) {
@@ -3933,6 +5046,20 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOBus2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐBus(ctx context.Context, sel ast.SelectionSet, v *model.Bus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Bus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODriver2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐDriver(ctx context.Context, sel ast.SelectionSet, v *model.Driver) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Driver(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalONotification2ᚖgithubᚗcomᚋlulzshadowwalkerᚋvonᚋgraphᚋmodelᚐNotification(ctx context.Context, sel ast.SelectionSet, v *model.Notification) graphql.Marshaler {
