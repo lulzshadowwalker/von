@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { Metadata } from 'next/types';
+import SecondaryButton from '@/components/secondary-button';
 
 export const metadata: Metadata = {
   title: 'Von | Drivers',
@@ -12,13 +13,13 @@ export const metadata: Metadata = {
 export default function Drivers() {
   return (
     <>
-      <header className='w-full px-page h-[8.5rem] bg-muted-400 flex justify-between items-center'>
+      <header className='w-full ps-page h-[8.5rem] bg-muted-400 flex justify-between items-center'>
         <section className='flex gap-[1.2rem] items-center'>
-          <h1 className='text-[22pt] text-muted-700'>Drivers</h1>
+          <h1 className='text-[22pt] text-muted-700 w-max me-4'>Drivers</h1>
         </section>
-        <div className='rounded-full h-[3.2rem] w-[3.2rem] bg-muted-700/50 flex items-center justify-center cursor-pointer'>
-          <FontAwesomeIcon icon={faBell} size={'sm'} />
-        </div>
+        <Link href='drivers/create' className='h-full'>
+          <SecondaryButton className='h-full w-[25rem]'>New</SecondaryButton>
+        </Link>
       </header>
 
       <main>
@@ -69,7 +70,10 @@ export default function Drivers() {
                             <a href='tel:1234567890'>123 456 7890</a>
                           </td>
                           <td className='whitespace-nowrap py-[1.2rem] px-5 align-middle'>
-                            <Link href="/busses" className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.25rem] rounded cursor-pointer transition-all hover:bg-muted-700'>
+                            <Link
+                              href='/busses'
+                              className='bg-muted-500 text-[8pt] text-muted-600 px-[0.8rem] py-[0.25rem] rounded cursor-pointer transition-all hover:bg-muted-700'
+                            >
                               XYZ8-R804
                             </Link>
                           </td>

@@ -1,10 +1,21 @@
 type Query {
-  notifications: [Notification]!
+  notifications: [Notification!]!
 }
 
 type Mutation {
   sendNotification(input: SendNotificationInput): Notification
 }
+
+directive @goModel(model: String, models: [String!]) on OBJECT
+    | INPUT_OBJECT
+    | SCALAR
+    | ENUM
+    | INTERFACE
+    | UNION
+
+directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
+
 
   """
   TODO: localizization
@@ -15,20 +26,20 @@ type Notification {
   id: ID!
   title: String!
   body: String!
-  sent_by: User!
   sent_at: String! 
+  sent_by: User! @goField(forceResolver: true)
   target_audience: [NotificationTargetAudience!]!
   delivery_method: [NotificationDeliveryMethod!]!
 }
 
 enum NotificationDeliveryMethod {
-  EMAIL
-  MOBILE_PUSH
+  email
+  mobile_push
 }
 
 enum NotificationTargetAudience {
-  PASSENGERS 
-  DRIVERS
+  passengers
+  drivers
 }
 
 input SendNotificationInput {

@@ -6,26 +6,49 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lulzshadowwalker/von/graph/model"
 )
 
 // SendNotification is the resolver for the sendNotification field.
 func (r *mutationResolver) SendNotification(ctx context.Context, input *model.SendNotificationInput) (*model.Notification, error) {
-	panic(fmt.Errorf("not implemented: SendNotification - sendNotification"))
+  payload := map[string]any {
+    "title": input.Title,
+    "body": input.Body,
+    "delivery_method": input.DeliveryMethod,
+    "target_audience": input.TargetAudience,
+    // TODO: obtain sender id via auth token
+    "sent_by": "h8r94dl9huaxs18",
+  }
+
+  return post[*model.Notification](r.PocketbaseApiController, "api/collections/notifications/records", payload)
+}
+
+// SentBy is the resolver for the sent_by field.
+func (r *notificationResolver) SentBy(ctx context.Context, obj *model.Notification) (*model.User, error) {
+  a, err := get[*model.User](r.PocketbaseApiController, "api/collections/users/records/" + obj.SenderId)
+  return a, err
 }
 
 // Notifications is the resolver for the notifications field.
 func (r *queryResolver) Notifications(ctx context.Context) ([]*model.Notification, error) {
-	panic(fmt.Errorf("not implemented: Notifications - notifications"))
+	type res struct {
+		Notifs []*model.Notification `json:"items"`
+	}
+
+	a, err := get[res](r.PocketbaseApiController, "api/collections/notifications/records")
+	return a.Notifs, err
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Notification returns NotificationResolver implementation.
+func (r *Resolver) Notification() NotificationResolver { return &notificationResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type notificationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

@@ -1,11 +1,16 @@
-default: dev
--- .DEFAULT_GOAL = dev 
+default: pb 
+-- .DEFAULT_GOAL = pb 
 
-PROJECT_NAME = api
-ENTRY_PT = ./cmd/graphql/main.go
+PROJECT_NAME = von
+GRAPHQL = ./cmd/graphql/main.go
+POCKETBASE = ./cmd/pocketbase/main.go
+POCKETBASE_DATA = ./pocketbase/
 
-.PHONY = dev
+.PHONY = graphql pb
 
-dev: 
-	go run ${ENTRY_PT}	
+graphql: 
+	go run ${GRAPHQL}	
 
+
+pb: 
+	go run ${POCKETBASE} serve --dir=${POCKETBASE_DATA}

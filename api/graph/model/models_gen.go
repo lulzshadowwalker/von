@@ -15,8 +15,8 @@ type Notification struct {
 	ID             string                       `json:"id"`
 	Title          string                       `json:"title"`
 	Body           string                       `json:"body"`
-	SentBy         *User                        `json:"sent_by"`
 	SentAt         string                       `json:"sent_at"`
+  SenderId       string                       `json:"sent_by"`
 	TargetAudience []NotificationTargetAudience `json:"target_audience"`
 	DeliveryMethod []NotificationDeliveryMethod `json:"delivery_method"`
 }
@@ -35,8 +35,8 @@ type User struct {
 type NotificationDeliveryMethod string
 
 const (
-	NotificationDeliveryMethodEmail      NotificationDeliveryMethod = "EMAIL"
-	NotificationDeliveryMethodMobilePush NotificationDeliveryMethod = "MOBILE_PUSH"
+	NotificationDeliveryMethodEmail      NotificationDeliveryMethod = "email"
+	NotificationDeliveryMethodMobilePush NotificationDeliveryMethod = "mobile_push"
 )
 
 var AllNotificationDeliveryMethod = []NotificationDeliveryMethod{
@@ -76,8 +76,8 @@ func (e NotificationDeliveryMethod) MarshalGQL(w io.Writer) {
 type NotificationTargetAudience string
 
 const (
-	NotificationTargetAudiencePassengers NotificationTargetAudience = "PASSENGERS"
-	NotificationTargetAudienceDrivers    NotificationTargetAudience = "DRIVERS"
+	NotificationTargetAudiencePassengers NotificationTargetAudience = "passengers"
+	NotificationTargetAudienceDrivers    NotificationTargetAudience = "drivers"
 )
 
 var AllNotificationTargetAudience = []NotificationTargetAudience{
